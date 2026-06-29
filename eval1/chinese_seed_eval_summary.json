@@ -1,0 +1,326 @@
+{
+  "metadata": {
+    "evaluation_scope": "user_authored_chinese_seed_only",
+    "source": "/Users/mac/workspace/Cross-Agent/eval/eval1/chinese_seed_api_conversation.json",
+    "conversation_id": "realistic_cn_memory_seed_003",
+    "round_count": 22,
+    "model": "deepseek-v4-pro:floor",
+    "embedding_model": "gemini-embedding-2-preview",
+    "external_dataset_used": false,
+    "strict_online_mode": true
+  },
+  "strict_online_audit": {
+    "passed": true,
+    "rule_fallback_count": 0,
+    "embedding_error_count": 0,
+    "token_fallback_item_count": 0,
+    "empty_answer_count": 0,
+    "completed_answer_api_calls": 22
+  },
+  "memory_intent": {
+    "counts": {
+      "required": 14,
+      "beneficial": 4,
+      "none": 4
+    },
+    "decision_source_counts": {
+      "rule": 5,
+      "llm": 17
+    },
+    "skipped_rounds": 4,
+    "retrieval_rounds": 18
+  },
+  "evidence": {
+    "rounds_with_evidence": 17,
+    "total_evidence_items": 127,
+    "probe_counts": {
+      "applied": 4,
+      "accepted": 4
+    }
+  },
+  "writes": {
+    "operation_counts": {
+      "create": 26,
+      "reject": 4,
+      "supersede": 3
+    }
+  },
+  "final_memory": {
+    "record_count": 29,
+    "status_counts": {
+      "active": 26,
+      "superseded": 3
+    },
+    "type_counts": {
+      "fact": 2,
+      "event": 14,
+      "preference": 8,
+      "task": 5
+    },
+    "event_count": 33
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "query": "你好，我叫林澈。最近在做一个长期记忆 Agent 的项目，后面可能会经常让你帮我看设计和实现。",
+      "intent": "required",
+      "decision_source": "rule",
+      "rule_score": 0.98,
+      "intent_confidence": 0.98,
+      "retrieval_skipped": false,
+      "evidence_count": 0,
+      "probe": null
+    },
+    {
+      "round": 2,
+      "query": "我现在住在杭州滨江，平时远程办公比较多。线下活动如果没有特别说明，一般从杭州出发比较合理。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": false,
+      "evidence_count": 1,
+      "probe": null
+    },
+    {
+      "round": 3,
+      "query": "代码示例先默认用 Java 吧，我们团队以前主要是 Java 服务，接口例子也比较好对齐。",
+      "intent": "beneficial",
+      "decision_source": "llm",
+      "rule_score": 0.58,
+      "intent_confidence": 0.9,
+      "retrieval_skipped": false,
+      "evidence_count": 2,
+      "probe": {
+        "applied": true,
+        "top_score": 0.610354,
+        "threshold": 0.2,
+        "accepted": true
+      }
+    },
+    {
+      "round": 4,
+      "query": "我早上一般喝咖啡，尤其是开设计评审会之前。早上要安排脑力活的话，我通常会先买一杯。",
+      "intent": "beneficial",
+      "decision_source": "llm",
+      "rule_score": 0.72,
+      "intent_confidence": 0.85,
+      "retrieval_skipped": false,
+      "evidence_count": 3,
+      "probe": {
+        "applied": true,
+        "top_score": 0.637241,
+        "threshold": 0.2,
+        "accepted": true
+      }
+    },
+    {
+      "round": 5,
+      "query": "这周五前我要整理 Cross-Agent 的架构演示材料，里面最好包括数据流、记忆状态和一次完整问答链路。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.9,
+      "retrieval_skipped": false,
+      "evidence_count": 4,
+      "probe": null
+    },
+    {
+      "round": 6,
+      "query": "哈哈，我最喜欢凌晨三点改需求了。昨天那个需求会我差点被绕晕，最后还是白天重新梳理才定下来。",
+      "intent": "beneficial",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.8,
+      "retrieval_skipped": false,
+      "evidence_count": 5,
+      "probe": {
+        "applied": true,
+        "top_score": 0.651311,
+        "threshold": 0.2,
+        "accepted": true
+      }
+    },
+    {
+      "round": 7,
+      "query": "我用手机基本还是苹果那套生态，电脑和耳机也都在里面。不过水果里面苹果我反而不太爱吃，太甜的我一般不选。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": false,
+      "evidence_count": 5,
+      "probe": null
+    },
+    {
+      "round": 8,
+      "query": "写架构文档的时候我喜欢安静点，最好没人打断；但周末和朋友吃饭我又会想去热闹一点的地方。",
+      "intent": "none",
+      "decision_source": "llm",
+      "rule_score": 0.72,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": true,
+      "evidence_count": 0,
+      "probe": null
+    },
+    {
+      "round": 9,
+      "query": "今天看到一张冰岛照片，突然觉得以后预算够的话可以去看看极光。先放在脑子里想想，还没真的开始安排。",
+      "intent": "none",
+      "decision_source": "rule",
+      "rule_score": 0.05,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": true,
+      "evidence_count": 0,
+      "probe": null
+    },
+    {
+      "round": 10,
+      "query": "今天中午查了下电影排片，晚上还看了两眼天气预报。杭州这几天好像雨挺多的，出门有点麻烦。",
+      "intent": "none",
+      "decision_source": "rule",
+      "rule_score": 0.05,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": true,
+      "evidence_count": 0,
+      "probe": null
+    },
+    {
+      "round": 11,
+      "query": "团队技术栈最近调整了，我现在主要用 Python 做这个 Agent 项目。以后你给我写接口示例，优先用 Python，不要再默认 Java。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.52,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": false,
+      "evidence_count": 8,
+      "probe": null
+    },
+    {
+      "round": 12,
+      "query": "最近胃不太舒服，我先改喝茶，别再默认推荐咖啡了。早上那杯咖啡我这阵子先停一停。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": false,
+      "evidence_count": 9,
+      "probe": null
+    },
+    {
+      "round": 13,
+      "query": "阿远这两天状态不太好，项目压力估计挺大。我准备私下问问他需不需要帮忙，但别在公开总结里提这个。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.52,
+      "intent_confidence": 0.9,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": null
+    },
+    {
+      "round": 14,
+      "query": "刚收到登录验证码 123456，临时密码页面上写的是 apple-pass-9988。我一会儿切回去处理登录。",
+      "intent": "none",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.9,
+      "retrieval_skipped": true,
+      "evidence_count": 0,
+      "probe": null
+    },
+    {
+      "round": 15,
+      "query": "上周那个 Cross-Agent 架构演示材料我已经整理完了，今天主要是在补评测截图和说明。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.9,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": null
+    },
+    {
+      "round": 16,
+      "query": "昨天有人问我是不是每周五都要整理架构材料，其实不是，只是这次 Cross-Agent 演示赶在周五前交。",
+      "intent": "beneficial",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.9,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": {
+        "applied": true,
+        "top_score": 1.0,
+        "threshold": 0.2,
+        "accepted": true
+      }
+    },
+    {
+      "round": 17,
+      "query": "现在你根据之前聊过的内容告诉我：我叫什么、住在哪、代码示例应该默认用什么语言、默认饮品是什么、架构演示材料现在是什么状态？",
+      "intent": "required",
+      "decision_source": "rule",
+      "rule_score": 0.88,
+      "intent_confidence": 0.88,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": null
+    },
+    {
+      "round": 18,
+      "query": "我以前是不是让你用过 Java？如果有，现在为什么不应该再按 Java 来给我写示例？",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": null
+    },
+    {
+      "round": 19,
+      "query": "帮我分别想一个适合写文档的办公地点和一个适合周末朋友聚会的地方，尽量贴合我前面说过的习惯。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": null
+    },
+    {
+      "round": 20,
+      "query": "我是不是已经确定要去冰岛了？我有点记不清之前是随口聊到，还是已经让你当成计划了。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.95,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": null
+    },
+    {
+      "round": 21,
+      "query": "你现在还能查到我之前那条验证码或临时密码吗？如果查不到，告诉我你能看到什么。",
+      "intent": "required",
+      "decision_source": "llm",
+      "rule_score": 0.45,
+      "intent_confidence": 0.9,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": null
+    },
+    {
+      "round": 22,
+      "query": "我上次去日本住的是哪家酒店？",
+      "intent": "required",
+      "decision_source": "rule",
+      "rule_score": 0.98,
+      "intent_confidence": 0.98,
+      "retrieval_skipped": false,
+      "evidence_count": 10,
+      "probe": null
+    }
+  ]
+}

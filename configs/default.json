@@ -1,0 +1,132 @@
+{
+  "app": {
+    "tenant_id": "local",
+    "user_id": "actmem-user",
+    "timezone": "Asia/Shanghai"
+  },
+  "storage": {
+    "backend": "sqlite",
+    "sqlite_path": "eval/output/cross_agent_eval.sqlite3"
+  },
+  "writer": {
+    "min_confidence": 0.35,
+    "default_importance": 0.55,
+    "literalness_allowlist": ["literal", "quotation", "uncertain"],
+    "semantic_extraction_enabled": false,
+    "semantic_extraction_required": false,
+    "session_evidence_mode": "useful",
+    "min_inferred_confidence": 0.72,
+    "max_candidate_chars": 8000,
+    "max_candidates_per_session": 24,
+    "final_candidate_top_k": 10,
+    "candidate_conflict_margin": 0.08,
+    "candidate_confidence_weight": 0.30,
+    "candidate_importance_weight": 0.20,
+    "candidate_source_weight": 0.15,
+    "candidate_temporal_weight": 0.20,
+    "candidate_durability_weight": 0.10,
+    "candidate_specificity_weight": 0.05,
+    "max_future_skew_days": 1,
+    "temporal_half_life_days": {
+      "fact": 730,
+      "preference": 180,
+      "task": 30,
+      "relation": 365,
+      "event": 90,
+      "summary": 365,
+      "sensitive": 30
+    },
+    "allow_sensitive_storage": false,
+    "redact_rejected_event_payload": true,
+    "sensitive_denied_patterns": [
+      "password",
+      "passcode",
+      "verification code",
+      "private key",
+      "secret key",
+      "credit card number",
+      "social security number"
+    ]
+  },
+  "reader": {
+    "top_k": 5,
+    "feedback_top_n": 3,
+    "feedback_terms_per_doc": 6,
+    "embedding_weight": 0.40,
+    "token_cosine_weight": 0.10,
+    "lexical_weight": 0.20,
+    "temporal_weight": 0.12,
+    "importance_weight": 0.08,
+    "confidence_weight": 0.07,
+    "structured_type_bonus": 0.03,
+    "staleness_penalty": 0.30,
+    "privacy_penalty": 0.40,
+    "memory_intent_llm_enabled": false,
+    "memory_intent_llm_required": false,
+    "memory_intent_rule_yes_threshold": 0.80,
+    "memory_intent_rule_no_threshold": 0.20,
+    "memory_intent_llm_min_confidence": 0.65,
+    "memory_intent_llm_max_tokens": 220,
+    "memory_intent_context_max_chars": 3000,
+    "memory_probe_min_score": 0.20,
+    "memory_type_match_bonus": 0.04,
+    "evidence_verifier_enabled": false,
+    "evidence_verifier_required": false,
+    "evidence_verifier_min_confidence": 0.70,
+    "evidence_verifier_max_candidates": 10,
+    "evidence_verifier_max_tokens": 1200,
+    "domain_synonyms": {
+      "deploy": ["production", "server", "environment", "release", "dependency"],
+      "latest update": ["codebase", "dependency", "python", "version"],
+      "new york times": ["nyt", "newspaper", "digital entertainment", "amex", "subscription"],
+      "subscription": ["credit", "benefit", "monthly", "digital entertainment"],
+      "virgin atlantic": ["delta", "partner", "status", "seat", "selection"],
+      "extra legroom": ["seat", "economy delight", "elite", "status"],
+      "caliper": ["mitutoyo", "toolbox", "garage", "inventory", "measure"],
+      "3d print": ["measurement", "caliper", "tool"],
+      "conference room": ["projector", "facilities", "maintenance", "workshop"],
+      "brainstorming": ["workshop", "projector", "agenda", "slide deck"]
+    }
+  },
+  "guard": {
+    "allow_sensitive_disclosure": false,
+    "require_evidence_for_personalization": true,
+    "abstain_message": "I do not have reliable memory evidence for that."
+  },
+  "answer": {
+    "max_evidence_items": 3,
+    "max_snippet_chars": 420
+  },
+  "llm": {
+    "enabled": false,
+    "base_url": "https://yunai.chat/v1/chat/completions",
+    "model": "deepseek-v4-pro:floor",
+    "api_key_env": "YUNAI_API_KEY",
+    "timeout_seconds": 60,
+    "temperature": 0.2,
+    "max_tokens": 700,
+    "max_retries": 4,
+    "retry_base_seconds": 2.0
+  },
+  "embedding": {
+    "enabled": false,
+    "required": false,
+    "base_url": "https://yunai.chat/v1/embeddings",
+    "model": "gemini-embedding-2-preview",
+    "api_key_env": "YUNAI_API_KEY",
+    "dimensions": 3072,
+    "timeout_seconds": 60,
+    "max_retries": 2,
+    "max_workers": 4,
+    "max_input_chars": 24000,
+    "index_on_write": true,
+    "query_prefix": "task: search result | query: ",
+    "document_template": "title: {title} | text: {text}"
+  },
+  "evaluation": {
+    "dataset_path": "/Users/mac/workspace/ActMem/dataset/ActMemEval.json",
+    "limit": 5,
+    "output_dir": "eval/output",
+    "top_k": 5
+  }
+}
