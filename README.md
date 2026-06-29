@@ -64,7 +64,6 @@ src/cross_agent/
   answer/                       # 证据约束回答
   guard/                        # 回答校验与拒答
   pipeline.py                   # 应用装配与编排
-  cli.py                        # 命令行入口
 scripts/                        # 中文种子观测、报告生成与评测工具
 tests/                          # 单元测试
 eval0/ eval1/ eval2/           # 已生成的分阶段评测快照
@@ -83,7 +82,9 @@ source .venv/bin/activate
 python3 -m pip install -e .
 ```
 
-## 在线模式
+## 中文 Seed 在线评测
+
+当前项目只使用仓库内自建的 22 轮中文用户 seed 进行正式评测，不依赖任何外部评测数据集。评测覆盖记忆写入、更新、冲突、遗忘、查询规划、混合召回、证据验证和受约束回答的完整链路。
 
 复制环境变量模板并填入 API key：
 
@@ -98,7 +99,7 @@ cp .env.example .env
 - Gemini Embedding：写入时建立向量缓存，查询时参与混合检索。
 - SQLite：记忆状态、审计事件和 embedding 缓存。
 
-运行 22 轮中文种子观测：
+运行严格在线评测：
 
 ```bash
 python3 scripts/run_chinese_seed_observation.py \
@@ -112,13 +113,25 @@ python3 scripts/run_chinese_seed_observation.py \
 
 `--strict-online` 要求语义抽取、LLM 记忆意图、LLM 证据验证和 Embedding 全部成功；服务重试后仍失败会终止运行，不生成降级结果。运行中断后可在同一组路径上追加 `--resume`，从 checkpoint 和现有 SQLite 状态继续。
 
-如果通过 CLI 运行在线评测，CLI 不会自动加载 `.env`，需先导出 key：
+评测会生成：
+
+```text
+eval/output/chinese_seed_observation.sqlite3
+eval/output/chinese_seed_api_conversation.json
+eval/output/chinese_seed_api_conversation.checkpoint.json
+eval/output/chinese_seed_memory_observation.md
+```
+
+将逐轮结果汇总为评测报告：
 
 ```bash
-export YUNAI_API_KEY=your-token
-export CROSS_AGENT_DATASET=/absolute/path/to/ActMemEval.json
-python3 -m cross_agent.cli eval --config configs/yunai.json --limit 5
+python3 scripts/summarize_chinese_seed_eval.py \
+  --input eval/output/chinese_seed_api_conversation.json \
+  --json eval/output/chinese_seed_eval_summary.json \
+  --markdown eval/output/chinese_seed_eval_summary.md
 ```
+
+汇总报告会记录 strict-online 审计、架构检查、记忆意图分布、证据召回、写入操作和最终记忆状态，并明确标记 `external_dataset_used=false`。
 
 API key 只从 `YUNAI_API_KEY` 读取，不应写入 JSON 配置或源码；`.env` 已被 `.gitignore` 忽略。
 
@@ -127,9 +140,7 @@ API key 只从 `YUNAI_API_KEY` 读取，不应写入 JSON 配置或源码；`.en
 所有阈值、权重、路径和能力开关都集中在 `configs/*.json`。支持以下环境变量覆盖：
 
 ```text
-CROSS_AGENT_DATASET
 CROSS_AGENT_SQLITE_PATH
-CROSS_AGENT_OUTPUT_DIR
 CROSS_AGENT_TENANT_ID
 CROSS_AGENT_USER_ID
 CROSS_AGENT_LLM_MODEL

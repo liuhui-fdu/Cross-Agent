@@ -89,7 +89,7 @@ class ReaderConfig:
     evidence_verifier_enabled: bool = False
     evidence_verifier_required: bool = False
     evidence_verifier_min_confidence: float = 0.70
-    evidence_verifier_max_candidates: int = 10
+    evidence_verifier_max_candidates: int = 20
     evidence_verifier_max_tokens: int = 1200
     domain_synonyms: Mapping[str, List[str]] = field(default_factory=dict)
 

@@ -9,8 +9,5 @@ description = "Cross-session long-term memory agent MVP."
 requires-python = ">=3.9"
 dependencies = []
 
-[project.scripts]
-cross-agent-eval = "cross_agent.cli:main"
-
 [tool.setuptools.packages.find]
 where = ["src"]

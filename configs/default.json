@@ -73,7 +73,7 @@
     "evidence_verifier_enabled": false,
     "evidence_verifier_required": false,
     "evidence_verifier_min_confidence": 0.70,
-    "evidence_verifier_max_candidates": 10,
+    "evidence_verifier_max_candidates": 20,
     "evidence_verifier_max_tokens": 1200,
     "domain_synonyms": {
       "deploy": ["production", "server", "environment", "release", "dependency"],

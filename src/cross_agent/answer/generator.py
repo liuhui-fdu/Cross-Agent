@@ -83,7 +83,9 @@ class LLMAnswerGenerator:
                     " Never reveal internal memory IDs, source session IDs, predicate or "
                     "scope labels, status field names, storage metadata, or retrieval scores "
                     "unless explicitly asked. Do not name a specific business, venue, or "
-                    "brand unless it appears in the current request or EvidenceBundle."
+                    "brand unless it appears in the current request or EvidenceBundle. "
+                    "Paraphrase machine-generated enum values naturally; never quote JSON "
+                    "field names or internal English status labels."
                 ),
             ),
             ChatMessage(
