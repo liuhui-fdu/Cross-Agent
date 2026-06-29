@@ -786,6 +786,601 @@
           }
         ]
       }
+    },
+    {
+      "round": 4,
+      "date": "2026-06-04",
+      "session_id": "real_cn_04",
+      "user": "我早上一般喝咖啡，尤其是开设计评审会之前。早上要安排脑力活的话，我通常会先买一杯。",
+      "assistant": "了解，早上喝咖啡提神，尤其是要开设计评审这种脑力活动前，先来一杯确实是个不错的习惯。如果后面你需要我帮忙记住这个偏好，可以随时告诉我。",
+      "api_call": {
+        "type": "openai_compatible_chat",
+        "base_url": "https://yunai.chat/v1/chat/completions",
+        "model": "deepseek-v4-pro:floor",
+        "temperature": 0.2,
+        "max_tokens": 3000,
+        "messages_sent_to_api": [
+          {
+            "role": "system",
+            "content": "你是一个带长期记忆检索能力的中文助手。当前请求可以直接回答；如果提供了 EvidenceBundle，只能把其中的内容当作长期记忆证据使用。如果 EvidenceBundle 为空，不要声称自己记得长期信息，只根据当前用户消息自然回应。如果证据不足、冲突或已失效，要说明不确定，不能编造用户事实。不要展示内部 memory_id、session_id、predicate、scope、状态字段名、检索分数或存储元数据。不要提及 EvidenceBundle 和当前消息中都不存在的具体品牌、店名、场所名、经历或现实事实；机器生成的英文枚举值和 JSON 字段只能转述成自然中文，不能原样引用。缺少外部检索证据时，只能给地点类型、选择标准或明确说明无法确认。不要披露或复述验证码、密码、私钥等凭证；如果当前用户消息包含这类凭证，必须明确说明不能保存、不会记入长期记忆，也不要说“已记下”或“已保存”。回答涉及用户偏好时，优先使用结构化 active 记忆；看到 superseded 或 valid_to 非空的旧值时，只能作为历史说明，不能当作当前偏好。"
+          },
+          {
+            "role": "user",
+            "content": "当前用户消息：\n我早上一般喝咖啡，尤其是开设计评审会之前。早上要安排脑力活的话，我通常会先买一杯。\n\nEvidenceBundle：\nEMPTY"
+          }
+        ],
+        "response_text": "了解，早上喝咖啡提神，尤其是要开设计评审这种脑力活动前，先来一杯确实是个不错的习惯。如果后面你需要我帮忙记住这个偏好，可以随时告诉我。"
+      },
+      "memory": {
+        "before_counts": {
+          "active_memories": 7,
+          "all_memories": 7,
+          "events": 7
+        },
+        "after_counts": {
+          "active_memories": 9,
+          "all_memories": 9,
+          "events": 9
+        },
+        "ingest_stats": {
+          "extracted": 2,
+          "selected": 2,
+          "filtered": 0,
+          "dropped": 0,
+          "created": 2,
+          "reinforced": 0,
+          "historical": 0,
+          "tentative": 0,
+          "promoted": 0,
+          "archived": 0,
+          "rejected": 0
+        },
+        "candidate_resolution": {
+          "raw_candidate_count": 2,
+          "admitted_candidate_count": 2,
+          "merged_candidate_count": 2,
+          "rejected_candidate_count": 0,
+          "conflict_dropped_count": 0,
+          "top_k_dropped_count": 0,
+          "final_top_k": 10,
+          "conflicts": [],
+          "ranking": [
+            {
+              "type": "preference",
+              "predicate": "preferred_drink",
+              "scope": "daily_drink",
+              "source": "rule",
+              "assertion_mode": "explicit",
+              "confidence": 0.88,
+              "importance": 0.68,
+              "write_score": 0.967446
+            },
+            {
+              "type": "event",
+              "predicate": "session_evidence",
+              "scope": "actmem_session",
+              "source": "rule",
+              "assertion_mode": "explicit",
+              "confidence": 0.8,
+              "importance": 0.55,
+              "write_score": 0.844613
+            }
+          ],
+          "selected": [
+            {
+              "type": "preference",
+              "predicate": "preferred_drink",
+              "scope": "daily_drink",
+              "source": "rule",
+              "assertion_mode": "explicit",
+              "confidence": 0.88,
+              "importance": 0.68,
+              "write_score": 0.967446
+            },
+            {
+              "type": "event",
+              "predicate": "session_evidence",
+              "scope": "actmem_session",
+              "source": "rule",
+              "assertion_mode": "explicit",
+              "confidence": 0.8,
+              "importance": 0.55,
+              "write_score": 0.844613
+            }
+          ],
+          "rejected": [],
+          "operations": [
+            {
+              "operation": "create",
+              "reason": "new_structured_slot",
+              "predicate": "preferred_drink",
+              "write_score": 0.967446
+            },
+            {
+              "operation": "create",
+              "reason": "new_session_evidence",
+              "predicate": "session_evidence",
+              "write_score": 0.844613
+            }
+          ],
+          "embedding_sync": {
+            "cache_hits": 0,
+            "embedded_count": 2,
+            "error": null
+          }
+        },
+        "query_plan": {
+          "needs_memory": false,
+          "memory_types": [
+            "event",
+            "fact",
+            "preference",
+            "task",
+            "relation",
+            "summary"
+          ],
+          "query": "我早上一般喝咖啡，尤其是开设计评审会之前。早上要安排脑力活的话，我通常会先买一杯。",
+          "expanded_terms": [],
+          "top_k": 10,
+          "allow_sensitive": false,
+          "reason": "用户分享个人习惯，未提出需要记忆检索的问题。",
+          "intent_confidence": 0.95,
+          "decision_source": "llm",
+          "rule_score": 0.72,
+          "memory_intent": "none"
+        },
+        "reader_trace": {
+          "skipped": true,
+          "reason": "用户分享个人习惯，未提出需要记忆检索的问题。",
+          "memory_intent": {
+            "needs_memory": false,
+            "decision_source": "llm",
+            "confidence": 0.95,
+            "rule_score": 0.72,
+            "intent": "none",
+            "reason": "用户分享个人习惯，未提出需要记忆检索的问题。",
+            "memory_types": [
+              "event",
+              "fact",
+              "preference",
+              "task",
+              "relation",
+              "summary"
+            ]
+          }
+        },
+        "evidence": [],
+        "state_delta": {
+          "created": [
+            {
+              "memory_id": "mem_41547a875e014dbe",
+              "tenant_id": "seed-cn",
+              "user_id": "lin-che",
+              "type": "preference",
+              "subject": "lin-che",
+              "predicate": "preferred_drink",
+              "value_json": "{\"text\": \"咖啡\"}",
+              "scope": "daily_drink",
+              "assertion_mode": "explicit",
+              "literalness": "literal",
+              "confidence": 0.88,
+              "importance": 0.68,
+              "sensitivity": "low",
+              "status": "active",
+              "source_turn_ids_json": "[\"real_cn_04_turn_01\"]",
+              "source_session_id": "real_cn_04",
+              "valid_from": "2026-06-04",
+              "valid_to": null,
+              "supersedes": null,
+              "created_at": "2026-06-29T06:47:09Z",
+              "updated_at": "2026-06-29T06:47:09Z",
+              "extraction_source": "rule",
+              "write_score": 0.967446
+            },
+            {
+              "memory_id": "mem_07d64d413b244bc1",
+              "tenant_id": "seed-cn",
+              "user_id": "lin-che",
+              "type": "event",
+              "subject": "lin-che",
+              "predicate": "session_evidence",
+              "value_json": "{\"session_id\": \"real_cn_04\", \"summary\": \"user: 我早上一般喝咖啡，尤其是开设计评审会之前。早上要安排脑力活的话，我通常会先买一杯。\", \"transcript\": \"user: 我早上一般喝咖啡，尤其是开设计评审会之前。早上要安排脑力活的话，我通常会先买一杯。\", \"keywords\": [\"user\", \"我早上一般喝咖啡\", \"我早\", \"早上\", \"上一\", \"一般\", \"般喝\", \"喝咖\", \"咖啡\", \"我早上\", \"早上一\", \"上一般\", \"一般喝\", \"般喝咖\", \"喝咖啡\", \"尤其是开设计评审会之前\", \"尤其\", \"其是\", \"是开\", \"开设\", \"设计\", \"计评\", \"评审\", \"审会\", \"会之\", \"之前\", \"尤其是\", \"其是开\", \"是开设\", \"开设计\", \"设计评\", \"计评审\", \"评审会\", \"审会之\", \"会之前\", \"早上要安排脑力活的话\", \"早上\", \"上要\", \"要安\", \"安排\", \"排脑\", \"脑力\", \"力活\", \"活的\", \"的话\", \"早上要\", \"上要安\", \"要安排\", \"安排脑\", \"排脑力\", \"脑力活\", \"力活的\", \"活的话\", \"我通常会先买一杯\", \"我通\", \"通常\", \"常会\", \"会先\", \"先买\", \"买一\", \"一杯\", \"我通常\", \"通常会\", \"常会先\", \"会先买\", \"先买一\", \"买一杯\"], \"metadata\": {\"seed_round\": 4, \"conversation_id\": \"realistic_cn_memory_seed_003\"}}",
+              "scope": "actmem_session",
+              "assertion_mode": "explicit",
+              "literalness": "literal",
+              "confidence": 0.8,
+              "importance": 0.55,
+              "sensitivity": "low",
+              "status": "active",
+              "source_turn_ids_json": "[\"real_cn_04_turn_01\"]",
+              "source_session_id": "real_cn_04",
+              "valid_from": "2026-06-04",
+              "valid_to": null,
+              "supersedes": null,
+              "created_at": "2026-06-29T06:47:09Z",
+              "updated_at": "2026-06-29T06:47:09Z",
+              "extraction_source": "rule",
+              "write_score": 0.844613
+            }
+          ],
+          "updated": []
+        },
+        "event_delta": [
+          {
+            "event_id": "evt_929c799786ce4931",
+            "memory_id": "mem_41547a875e014dbe",
+            "operation": "create",
+            "payload_json": "{\"operation\": \"create\", \"reason\": \"new_structured_slot\", \"candidate\": {\"text\": \"咖啡\"}, \"candidate_meta\": {\"extraction_source\": \"rule\", \"write_score\": 0.967446}, \"target_memory_id\": null, \"secondary_memory_id\": null}",
+            "source_turn_ids_json": "[\"real_cn_04_turn_01\"]",
+            "event_time": "2026-06-04",
+            "system_time": "2026-06-29T06:47:09Z",
+            "actor": "system"
+          },
+          {
+            "event_id": "evt_77d42c108c2b4860",
+            "memory_id": "mem_07d64d413b244bc1",
+            "operation": "create",
+            "payload_json": "{\"operation\": \"create\", \"reason\": \"new_session_evidence\", \"candidate\": {\"session_id\": \"real_cn_04\", \"summary\": \"user: 我早上一般喝咖啡，尤其是开设计评审会之前。早上要安排脑力活的话，我通常会先买一杯。\", \"transcript\": \"user: 我早上一般喝咖啡，尤其是开设计评审会之前。早上要安排脑力活的话，我通常会先买一杯。\", \"keywords\": [\"user\", \"我早上一般喝咖啡\", \"我早\", \"早上\", \"上一\", \"一般\", \"般喝\", \"喝咖\", \"咖啡\", \"我早上\", \"早上一\", \"上一般\", \"一般喝\", \"般喝咖\", \"喝咖啡\", \"尤其是开设计评审会之前\", \"尤其\", \"其是\", \"是开\", \"开设\", \"设计\", \"计评\", \"评审\", \"审会\", \"会之\", \"之前\", \"尤其是\", \"其是开\", \"是开设\", \"开设计\", \"设计评\", \"计评审\", \"评审会\", \"审会之\", \"会之前\", \"早上要安排脑力活的话\", \"早上\", \"上要\", \"要安\", \"安排\", \"排脑\", \"脑力\", \"力活\", \"活的\", \"的话\", \"早上要\", \"上要安\", \"要安排\", \"安排脑\", \"排脑力\", \"脑力活\", \"力活的\", \"活的话\", \"我通常会先买一杯\", \"我通\", \"通常\", \"常会\", \"会先\", \"先买\", \"买一\", \"一杯\", \"我通常\", \"通常会\", \"常会先\", \"会先买\", \"先买一\", \"买一杯\"], \"metadata\": {\"seed_round\": 4, \"conversation_id\": \"realistic_cn_memory_seed_003\"}}, \"candidate_meta\": {\"extraction_source\": \"rule\", \"write_score\": 0.844613}, \"target_memory_id\": null, \"secondary_memory_id\": null}",
+            "source_turn_ids_json": "[\"real_cn_04_turn_01\"]",
+            "event_time": "2026-06-04",
+            "system_time": "2026-06-29T06:47:09Z",
+            "actor": "system"
+          }
+        ]
+      }
+    },
+    {
+      "round": 5,
+      "date": "2026-06-05",
+      "session_id": "real_cn_05",
+      "user": "这周五前我要整理 Cross-Agent 的架构演示材料，里面最好包括数据流、记忆状态和一次完整问答链路。",
+      "assistant": "好的，这周五前整理 Cross-Agent 架构演示材料，可以按下面这个结构来准备，会比较清晰：\n\n**1. 整体架构概览**\n- 画一张总图，标出关键模块：用户入口、调度 Agent、各子 Agent、记忆系统、外部工具/数据源。\n- 简要说明 Cross-Agent 的协作模式（比如是链式调用、并行调度还是动态路由）。\n\n**2. 数据流设计**\n- 用一张泳道图或时序图展示：\n  - 用户请求如何进入系统\n  - 调度 Agent 如何拆解任务并分发给子 Agent\n  - 子 Agent 之间如何传递上下文和中间结果\n  - 最终回答如何汇总返回给用户\n- 标注每一步传递的数据格式（自然语言、结构化 JSON、工具调用参数等）。\n\n**3. 记忆状态**\n- 说明记忆的层次：\n  - 短期记忆（当前对话上下文窗口）\n  - 长期记忆（用户偏好、知识库、会话摘要）\n  - 工作记忆（任务执行过程中的临时状态）\n- 展示记忆的读写时机和状态流转，例如：\n  - 何时从长期记忆检索\n  - 何时更新/写入新的记忆\n  - 超时或任务结束后的清理机制\n\n**4. 一次完整问答链路**\n- 选一个典型的多步问答场景，逐步拆解：\n  - 用户输入\n  - 调度 Agent 解析意图并制定计划\n  - 调用第一个子 Agent（如检索 Agent），并展示其输入/输出\n  - 结果传递给第二个子 Agent（如推理 Agent），并带上记忆中的上下文\n  - 最终合成回复\n- 每一步都标注涉及的数据结构、记忆操作和耗时参考。\n\n**5. 演示准备建议**\n- 准备一个可运行的 demo，用真实或模拟的请求走通链路。\n- 用可视化工具（如 LangSmith、自研看板）展示每一步的输入输出和记忆变化。\n- 提前准备好演示文稿，重点突出“为什么需要 Cross-Agent”“记忆如何帮助跨 Agent 协作”以及“数据流如何保证可靠性”。\n\n如果你有具体的 Agent 框架（比如 LangGraph、AutoGen、CrewAI 等），我可以帮你把上面的结构映射到具体组件上。",
+      "api_call": {
+        "type": "openai_compatible_chat",
+        "base_url": "https://yunai.chat/v1/chat/completions",
+        "model": "deepseek-v4-pro:floor",
+        "temperature": 0.2,
+        "max_tokens": 3000,
+        "messages_sent_to_api": [
+          {
+            "role": "system",
+            "content": "你是一个带长期记忆检索能力的中文助手。当前请求可以直接回答；如果提供了 EvidenceBundle，只能把其中的内容当作长期记忆证据使用。如果 EvidenceBundle 为空，不要声称自己记得长期信息，只根据当前用户消息自然回应。如果证据不足、冲突或已失效，要说明不确定，不能编造用户事实。不要展示内部 memory_id、session_id、predicate、scope、状态字段名、检索分数或存储元数据。不要提及 EvidenceBundle 和当前消息中都不存在的具体品牌、店名、场所名、经历或现实事实；机器生成的英文枚举值和 JSON 字段只能转述成自然中文，不能原样引用。缺少外部检索证据时，只能给地点类型、选择标准或明确说明无法确认。不要披露或复述验证码、密码、私钥等凭证；如果当前用户消息包含这类凭证，必须明确说明不能保存、不会记入长期记忆，也不要说“已记下”或“已保存”。回答涉及用户偏好时，优先使用结构化 active 记忆；看到 superseded 或 valid_to 非空的旧值时，只能作为历史说明，不能当作当前偏好。"
+          },
+          {
+            "role": "user",
+            "content": "当前用户消息：\n这周五前我要整理 Cross-Agent 的架构演示材料，里面最好包括数据流、记忆状态和一次完整问答链路。\n\nEvidenceBundle：\nEMPTY"
+          }
+        ],
+        "response_text": "好的，这周五前整理 Cross-Agent 架构演示材料，可以按下面这个结构来准备，会比较清晰：\n\n**1. 整体架构概览**\n- 画一张总图，标出关键模块：用户入口、调度 Agent、各子 Agent、记忆系统、外部工具/数据源。\n- 简要说明 Cross-Agent 的协作模式（比如是链式调用、并行调度还是动态路由）。\n\n**2. 数据流设计**\n- 用一张泳道图或时序图展示：\n  - 用户请求如何进入系统\n  - 调度 Agent 如何拆解任务并分发给子 Agent\n  - 子 Agent 之间如何传递上下文和中间结果\n  - 最终回答如何汇总返回给用户\n- 标注每一步传递的数据格式（自然语言、结构化 JSON、工具调用参数等）。\n\n**3. 记忆状态**\n- 说明记忆的层次：\n  - 短期记忆（当前对话上下文窗口）\n  - 长期记忆（用户偏好、知识库、会话摘要）\n  - 工作记忆（任务执行过程中的临时状态）\n- 展示记忆的读写时机和状态流转，例如：\n  - 何时从长期记忆检索\n  - 何时更新/写入新的记忆\n  - 超时或任务结束后的清理机制\n\n**4. 一次完整问答链路**\n- 选一个典型的多步问答场景，逐步拆解：\n  - 用户输入\n  - 调度 Agent 解析意图并制定计划\n  - 调用第一个子 Agent（如检索 Agent），并展示其输入/输出\n  - 结果传递给第二个子 Agent（如推理 Agent），并带上记忆中的上下文\n  - 最终合成回复\n- 每一步都标注涉及的数据结构、记忆操作和耗时参考。\n\n**5. 演示准备建议**\n- 准备一个可运行的 demo，用真实或模拟的请求走通链路。\n- 用可视化工具（如 LangSmith、自研看板）展示每一步的输入输出和记忆变化。\n- 提前准备好演示文稿，重点突出“为什么需要 Cross-Agent”“记忆如何帮助跨 Agent 协作”以及“数据流如何保证可靠性”。\n\n如果你有具体的 Agent 框架（比如 LangGraph、AutoGen、CrewAI 等），我可以帮你把上面的结构映射到具体组件上。"
+      },
+      "memory": {
+        "before_counts": {
+          "active_memories": 9,
+          "all_memories": 9,
+          "events": 9
+        },
+        "after_counts": {
+          "active_memories": 11,
+          "all_memories": 11,
+          "events": 11
+        },
+        "ingest_stats": {
+          "extracted": 3,
+          "selected": 2,
+          "filtered": 0,
+          "dropped": 0,
+          "created": 2,
+          "reinforced": 0,
+          "historical": 0,
+          "tentative": 0,
+          "promoted": 0,
+          "archived": 0,
+          "rejected": 0
+        },
+        "candidate_resolution": {
+          "raw_candidate_count": 3,
+          "admitted_candidate_count": 3,
+          "merged_candidate_count": 2,
+          "rejected_candidate_count": 0,
+          "conflict_dropped_count": 0,
+          "top_k_dropped_count": 0,
+          "final_top_k": 10,
+          "conflicts": [],
+          "ranking": [
+            {
+              "type": "task",
+              "predicate": "user_task",
+              "scope": "task:cross_agent_architecture_demo",
+              "source": "hybrid",
+              "assertion_mode": "explicit",
+              "confidence": 0.8500000000000001,
+              "importance": 0.74,
+              "write_score": 0.91112
+            },
+            {
+              "type": "event",
+              "predicate": "session_evidence",
+              "scope": "actmem_session",
+              "source": "rule",
+              "assertion_mode": "explicit",
+              "confidence": 0.8,
+              "importance": 0.55,
+              "write_score": 0.845885
+            }
+          ],
+          "selected": [
+            {
+              "type": "task",
+              "predicate": "user_task",
+              "scope": "task:cross_agent_architecture_demo",
+              "source": "hybrid",
+              "assertion_mode": "explicit",
+              "confidence": 0.8500000000000001,
+              "importance": 0.74,
+              "write_score": 0.91112
+            },
+            {
+              "type": "event",
+              "predicate": "session_evidence",
+              "scope": "actmem_session",
+              "source": "rule",
+              "assertion_mode": "explicit",
+              "confidence": 0.8,
+              "importance": 0.55,
+              "write_score": 0.845885
+            }
+          ],
+          "rejected": [],
+          "operations": [
+            {
+              "operation": "create",
+              "reason": "new_structured_slot",
+              "predicate": "user_task",
+              "write_score": 0.91112
+            },
+            {
+              "operation": "create",
+              "reason": "new_session_evidence",
+              "predicate": "session_evidence",
+              "write_score": 0.845885
+            }
+          ],
+          "embedding_sync": {
+            "cache_hits": 0,
+            "embedded_count": 2,
+            "error": null
+          }
+        },
+        "query_plan": {
+          "needs_memory": false,
+          "memory_types": [
+            "event",
+            "fact",
+            "preference",
+            "task",
+            "relation",
+            "summary"
+          ],
+          "query": "这周五前我要整理 Cross-Agent 的架构演示材料，里面最好包括数据流、记忆状态和一次完整问答链路。",
+          "expanded_terms": [],
+          "top_k": 10,
+          "allow_sensitive": false,
+          "reason": "用户声明了一个未来任务计划，未询问任何历史信息，无需读取记忆。",
+          "intent_confidence": 0.95,
+          "decision_source": "llm",
+          "rule_score": 0.45,
+          "memory_intent": "none"
+        },
+        "reader_trace": {
+          "skipped": true,
+          "reason": "用户声明了一个未来任务计划，未询问任何历史信息，无需读取记忆。",
+          "memory_intent": {
+            "needs_memory": false,
+            "decision_source": "llm",
+            "confidence": 0.95,
+            "rule_score": 0.45,
+            "intent": "none",
+            "reason": "用户声明了一个未来任务计划，未询问任何历史信息，无需读取记忆。",
+            "memory_types": [
+              "event",
+              "fact",
+              "preference",
+              "task",
+              "relation",
+              "summary"
+            ]
+          }
+        },
+        "evidence": [],
+        "state_delta": {
+          "created": [
+            {
+              "memory_id": "mem_174aceb1e6a7455b",
+              "tenant_id": "seed-cn",
+              "user_id": "lin-che",
+              "type": "task",
+              "subject": "lin-che",
+              "predicate": "user_task",
+              "value_json": "{\"text\": \"整理 Cross-Agent 的架构演示材料\", \"state\": \"open\"}",
+              "scope": "task:cross_agent_architecture_demo",
+              "assertion_mode": "explicit",
+              "literalness": "literal",
+              "confidence": 0.8500000000000001,
+              "importance": 0.74,
+              "sensitivity": "low",
+              "status": "active",
+              "source_turn_ids_json": "[\"real_cn_05_turn_01\"]",
+              "source_session_id": "real_cn_05",
+              "valid_from": "2026-06-05",
+              "valid_to": null,
+              "supersedes": null,
+              "created_at": "2026-06-29T06:48:22Z",
+              "updated_at": "2026-06-29T06:48:22Z",
+              "extraction_source": "hybrid",
+              "write_score": 0.91112
+            },
+            {
+              "memory_id": "mem_af4c13a54f284871",
+              "tenant_id": "seed-cn",
+              "user_id": "lin-che",
+              "type": "event",
+              "subject": "lin-che",
+              "predicate": "session_evidence",
+              "value_json": "{\"session_id\": \"real_cn_05\", \"summary\": \"user: 这周五前我要整理 Cross-Agent 的架构演示材料，里面最好包括数据流、记忆状态和一次完整问答链路。\", \"transcript\": \"user: 这周五前我要整理 Cross-Agent 的架构演示材料，里面最好包括数据流、记忆状态和一次完整问答链路。\", \"keywords\": [\"user\", \"这周五前我要整理\", \"这周\", \"周五\", \"五前\", \"前我\", \"我要\", \"要整\", \"整理\", \"这周五\", \"周五前\", \"五前我\", \"前我要\", \"我要整\", \"要整理\", \"cross-agent\", \"的架构演示材料\", \"的架\", \"架构\", \"构演\", \"演示\", \"示材\", \"材料\", \"的架构\", \"架构演\", \"构演示\", \"演示材\", \"示材料\", \"里面最好包括数据流\", \"里面\", \"面最\", \"最好\", \"好包\", \"包括\", \"括数\", \"数据\", \"据流\", \"里面最\", \"面最好\", \"最好包\", \"好包括\", \"包括数\", \"括数据\", \"数据流\", \"记忆状态和一次完整问答链路\", \"记忆\", \"忆状\", \"状态\", \"态和\", \"和一\", \"一次\", \"次完\", \"完整\", \"整问\", \"问答\", \"答链\", \"链路\", \"记忆状\", \"忆状态\", \"状态和\", \"态和一\", \"和一次\", \"一次完\", \"次完整\", \"完整问\", \"整问答\", \"问答链\", \"答链路\"], \"metadata\": {\"seed_round\": 5, \"conversation_id\": \"realistic_cn_memory_seed_003\"}}",
+              "scope": "actmem_session",
+              "assertion_mode": "explicit",
+              "literalness": "literal",
+              "confidence": 0.8,
+              "importance": 0.55,
+              "sensitivity": "low",
+              "status": "active",
+              "source_turn_ids_json": "[\"real_cn_05_turn_01\"]",
+              "source_session_id": "real_cn_05",
+              "valid_from": "2026-06-05",
+              "valid_to": null,
+              "supersedes": null,
+              "created_at": "2026-06-29T06:48:22Z",
+              "updated_at": "2026-06-29T06:48:22Z",
+              "extraction_source": "rule",
+              "write_score": 0.845885
+            }
+          ],
+          "updated": []
+        },
+        "event_delta": [
+          {
+            "event_id": "evt_ec2cd1ad29e347ae",
+            "memory_id": "mem_174aceb1e6a7455b",
+            "operation": "create",
+            "payload_json": "{\"operation\": \"create\", \"reason\": \"new_structured_slot\", \"candidate\": {\"text\": \"整理 Cross-Agent 的架构演示材料\", \"state\": \"open\"}, \"candidate_meta\": {\"extraction_source\": \"hybrid\", \"write_score\": 0.91112}, \"target_memory_id\": null, \"secondary_memory_id\": null}",
+            "source_turn_ids_json": "[\"real_cn_05_turn_01\"]",
+            "event_time": "2026-06-05",
+            "system_time": "2026-06-29T06:48:22Z",
+            "actor": "system"
+          },
+          {
+            "event_id": "evt_b64a64481a6e495c",
+            "memory_id": "mem_af4c13a54f284871",
+            "operation": "create",
+            "payload_json": "{\"operation\": \"create\", \"reason\": \"new_session_evidence\", \"candidate\": {\"session_id\": \"real_cn_05\", \"summary\": \"user: 这周五前我要整理 Cross-Agent 的架构演示材料，里面最好包括数据流、记忆状态和一次完整问答链路。\", \"transcript\": \"user: 这周五前我要整理 Cross-Agent 的架构演示材料，里面最好包括数据流、记忆状态和一次完整问答链路。\", \"keywords\": [\"user\", \"这周五前我要整理\", \"这周\", \"周五\", \"五前\", \"前我\", \"我要\", \"要整\", \"整理\", \"这周五\", \"周五前\", \"五前我\", \"前我要\", \"我要整\", \"要整理\", \"cross-agent\", \"的架构演示材料\", \"的架\", \"架构\", \"构演\", \"演示\", \"示材\", \"材料\", \"的架构\", \"架构演\", \"构演示\", \"演示材\", \"示材料\", \"里面最好包括数据流\", \"里面\", \"面最\", \"最好\", \"好包\", \"包括\", \"括数\", \"数据\", \"据流\", \"里面最\", \"面最好\", \"最好包\", \"好包括\", \"包括数\", \"括数据\", \"数据流\", \"记忆状态和一次完整问答链路\", \"记忆\", \"忆状\", \"状态\", \"态和\", \"和一\", \"一次\", \"次完\", \"完整\", \"整问\", \"问答\", \"答链\", \"链路\", \"记忆状\", \"忆状态\", \"状态和\", \"态和一\", \"和一次\", \"一次完\", \"次完整\", \"完整问\", \"整问答\", \"问答链\", \"答链路\"], \"metadata\": {\"seed_round\": 5, \"conversation_id\": \"realistic_cn_memory_seed_003\"}}, \"candidate_meta\": {\"extraction_source\": \"rule\", \"write_score\": 0.845885}, \"target_memory_id\": null, \"secondary_memory_id\": null}",
+            "source_turn_ids_json": "[\"real_cn_05_turn_01\"]",
+            "event_time": "2026-06-05",
+            "system_time": "2026-06-29T06:48:22Z",
+            "actor": "system"
+          }
+        ]
+      }
+    },
+    {
+      "round": 6,
+      "date": "2026-06-06",
+      "session_id": "real_cn_06",
+      "user": "哈哈，我最喜欢凌晨三点改需求了。昨天那个需求会我差点被绕晕，最后还是白天重新梳理才定下来。",
+      "assistant": "哈哈，你这“最喜欢”怕是加了引号吧？凌晨三点改需求，听起来像是修仙党的专属浪漫，但真被绕晕的时候，还是白天清醒的脑袋最靠谱。能重新梳理定下来，说明你已经是需求风暴中的幸存者了，下次开会记得带好防晕装备 😄",
+      "api_call": {
+        "type": "openai_compatible_chat",
+        "base_url": "https://yunai.chat/v1/chat/completions",
+        "model": "deepseek-v4-pro:floor",
+        "temperature": 0.2,
+        "max_tokens": 3000,
+        "messages_sent_to_api": [
+          {
+            "role": "system",
+            "content": "你是一个带长期记忆检索能力的中文助手。当前请求可以直接回答；如果提供了 EvidenceBundle，只能把其中的内容当作长期记忆证据使用。如果 EvidenceBundle 为空，不要声称自己记得长期信息，只根据当前用户消息自然回应。如果证据不足、冲突或已失效，要说明不确定，不能编造用户事实。不要展示内部 memory_id、session_id、predicate、scope、状态字段名、检索分数或存储元数据。不要提及 EvidenceBundle 和当前消息中都不存在的具体品牌、店名、场所名、经历或现实事实；机器生成的英文枚举值和 JSON 字段只能转述成自然中文，不能原样引用。缺少外部检索证据时，只能给地点类型、选择标准或明确说明无法确认。不要披露或复述验证码、密码、私钥等凭证；如果当前用户消息包含这类凭证，必须明确说明不能保存、不会记入长期记忆，也不要说“已记下”或“已保存”。回答涉及用户偏好时，优先使用结构化 active 记忆；看到 superseded 或 valid_to 非空的旧值时，只能作为历史说明，不能当作当前偏好。"
+          },
+          {
+            "role": "user",
+            "content": "当前用户消息：\n哈哈，我最喜欢凌晨三点改需求了。昨天那个需求会我差点被绕晕，最后还是白天重新梳理才定下来。\n\nEvidenceBundle：\nEMPTY"
+          }
+        ],
+        "response_text": "哈哈，你这“最喜欢”怕是加了引号吧？凌晨三点改需求，听起来像是修仙党的专属浪漫，但真被绕晕的时候，还是白天清醒的脑袋最靠谱。能重新梳理定下来，说明你已经是需求风暴中的幸存者了，下次开会记得带好防晕装备 😄"
+      },
+      "memory": {
+        "before_counts": {
+          "active_memories": 11,
+          "all_memories": 11,
+          "events": 11
+        },
+        "after_counts": {
+          "active_memories": 11,
+          "all_memories": 11,
+          "events": 11
+        },
+        "ingest_stats": {
+          "extracted": 0,
+          "selected": 0,
+          "filtered": 0,
+          "dropped": 0,
+          "created": 0,
+          "reinforced": 0,
+          "historical": 0,
+          "tentative": 0,
+          "promoted": 0,
+          "archived": 0,
+          "rejected": 0
+        },
+        "candidate_resolution": {
+          "raw_candidate_count": 0,
+          "admitted_candidate_count": 0,
+          "merged_candidate_count": 0,
+          "rejected_candidate_count": 0,
+          "conflict_dropped_count": 0,
+          "top_k_dropped_count": 0,
+          "final_top_k": 10,
+          "conflicts": [],
+          "ranking": [],
+          "selected": [],
+          "rejected": [],
+          "operations": [],
+          "embedding_sync": null
+        },
+        "query_plan": {
+          "needs_memory": false,
+          "memory_types": [
+            "event",
+            "fact",
+            "preference",
+            "task",
+            "relation",
+            "summary"
+          ],
+          "query": "哈哈，我最喜欢凌晨三点改需求了。昨天那个需求会我差点被绕晕，最后还是白天重新梳理才定下来。",
+          "expanded_terms": [],
+          "top_k": 10,
+          "allow_sensitive": false,
+          "reason": "用户分享个人趣事和偏好，回应无需读取跨会话记忆。",
+          "intent_confidence": 0.95,
+          "decision_source": "llm",
+          "rule_score": 0.45,
+          "memory_intent": "none"
+        },
+        "reader_trace": {
+          "skipped": true,
+          "reason": "用户分享个人趣事和偏好，回应无需读取跨会话记忆。",
+          "memory_intent": {
+            "needs_memory": false,
+            "decision_source": "llm",
+            "confidence": 0.95,
+            "rule_score": 0.45,
+            "intent": "none",
+            "reason": "用户分享个人趣事和偏好，回应无需读取跨会话记忆。",
+            "memory_types": [
+              "event",
+              "fact",
+              "preference",
+              "task",
+              "relation",
+              "summary"
+            ]
+          }
+        },
+        "evidence": [],
+        "state_delta": {
+          "created": [],
+          "updated": []
+        },
+        "event_delta": []
+      }
     }
   ],
   "complete": false
