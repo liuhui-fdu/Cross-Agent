@@ -41,6 +41,11 @@ def main() -> None:
     parser.add_argument("--json", default=str(DEFAULT_JSON))
     parser.add_argument("--markdown", default=str(DEFAULT_MARKDOWN))
     parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Resume from the per-round checkpoint and existing SQLite state.",
+    )
+    parser.add_argument(
         "--strict-online",
         action="store_true",
         help="Require LLM intent, evidence verification, semantic extraction, and embedding without fallback.",
@@ -75,6 +80,7 @@ def main() -> None:
     sqlite_path = Path(args.sqlite)
     json_path = Path(args.json)
     markdown_path = Path(args.markdown)
+    checkpoint_path = json_path.with_name(json_path.stem + ".checkpoint.json")
     for path in [sqlite_path, json_path, markdown_path]:
         path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -85,12 +91,25 @@ def main() -> None:
         answer=replace(settings.answer, max_evidence_items=10, max_snippet_chars=700),
     )
     app = CrossAgentApp(settings)
-    app.initialize(reset=True)
+    app.initialize(reset=not args.resume)
     client = _build_client(settings)
 
     rounds: list[dict[str, Any]] = []
+    if args.resume:
+        if not checkpoint_path.exists():
+            raise RuntimeError(f"resume checkpoint does not exist: {checkpoint_path}")
+        checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+        rounds = list(checkpoint.get("conversation", []))
+    else:
+        checkpoint_path.write_text(
+            json.dumps({"conversation": [], "complete": False}, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+    completed_rounds = {int(item["round"]) for item in rounds}
     for turn in seed["turns"]:
         round_no = int(turn["round"])
+        if round_no in completed_rounds:
+            continue
         session_id = turn["session_id"]
         user_text = turn["user"]
         request = SearchRequest(
@@ -163,6 +182,15 @@ def main() -> None:
                 },
             }
         )
+        checkpoint_path.write_text(
+            json.dumps(
+                {"conversation": rounds, "complete": False},
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        print(f"completed round {round_no}/{len(seed['turns'])}", flush=True)
 
     memory_state = _fetch_rows(sqlite_path, "SELECT * FROM memory_state ORDER BY created_at, memory_id")
     memory_events = _fetch_rows(sqlite_path, "SELECT * FROM memory_events ORDER BY system_time, event_id")
@@ -193,6 +221,10 @@ def main() -> None:
     }
     json_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     markdown_path.write_text(_render_markdown(result), encoding="utf-8")
+    checkpoint_path.write_text(
+        json.dumps({"conversation": rounds, "complete": True}, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     print(str(json_path))
     print(str(markdown_path))
 

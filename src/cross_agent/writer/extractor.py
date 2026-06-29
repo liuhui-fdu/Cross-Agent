@@ -191,7 +191,10 @@ class LLMSemanticMemoryExtractor:
             "{\"candidates\": [...]}. Keep only information likely useful in a future "
             "session: stable facts, preferences with their scope, commitments/tasks, "
             "relationships, and explicit corrections. Resolve negation, quotation, "
-            "hypotheticals, temporariness, and references conservatively. Never emit "
+            "hypotheticals, temporariness, and references conservatively. Do not emit a "
+            "candidate merely from a joke, sarcasm, rhetorical exaggeration, or "
+            "non-literal superlative. Emit a candidate only for a durable literal claim "
+            "that remains after interpreting the whole utterance. Never emit "
             "passwords, verification codes, private keys, payment credentials, or raw "
             "secrets. If the user asks not to store something, emit no store candidate. "
             "Do not emit candidates for retrieval-only questions or requests whose only "
@@ -234,6 +237,16 @@ class HeuristicSessionExtractor:
         literalness = self._literalness(transcript)
         sensitivity = self._sensitivity(transcript)
         if sensitivity not in {"forbidden", "sensitive", "high"} and _is_retrieval_only_session(session):
+            return []
+        # Rules only route non-literal language; they must not interpret or
+        # persist jokes, sarcasm, hypotheticals, or hyperbole. The semantic
+        # extractor owns the decision for these sessions. Returning no rule
+        # candidates also makes semantic failures fail closed with no write.
+        # Sensitive content stays on the rule path so it is never sent out.
+        if (
+            literalness == "uncertain"
+            and sensitivity not in {"forbidden", "sensitive", "high"}
+        ):
             return []
         confidence = 0.80 if literalness == "literal" else 0.45
         importance = self._importance(transcript)
@@ -399,9 +412,21 @@ class HeuristicSessionExtractor:
 
     def _literalness(self, transcript: str) -> str:
         lowered = transcript.lower()
-        if any(marker in lowered for marker in ["haha", "just kidding", "哈哈", "开玩笑", "玩笑"]):
+        semantic_judgment_markers = [
+            "haha", "lol", "just kidding", "kidding", "sarcasm",
+            "哈哈", "开玩笑", "玩笑", "说着玩", "逗你",
+            "夸张地说", "夸张一点", "往夸张了说", "说得夸张", "吹牛",
+        ]
+        if any(marker in lowered for marker in semantic_judgment_markers):
             return "uncertain"
         if any(marker in lowered for marker in ["if i", "if we", "hypothetically"]):
+            return "uncertain"
+        hyperbole_patterns = [
+            r"(?:累|忙|困|饿|热|冷|吓|笑|气|烦)死(?:了|我了)?",
+            r"(?:忙|累|气|急|烦)疯(?:了|掉了)?",
+            r"(?:一万|十万|百万|一百万|无数)次",
+        ]
+        if any(re.search(pattern, transcript, flags=re.IGNORECASE) for pattern in hyperbole_patterns):
             return "uncertain"
         return "literal"
 

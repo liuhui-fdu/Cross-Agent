@@ -160,6 +160,60 @@ class HybridExtractorTest(unittest.TestCase):
         self.assertEqual(1, client.calls)
         self.assertTrue(any(item.predicate == "name" for item in candidates))
 
+    def test_joke_and_hyperbole_are_routed_to_semantic_extractor_only(self) -> None:
+        settings = load_settings(REPO_ROOT / "configs" / "default.json")
+        client = FakeChatClient(
+            '{"candidates":[{'
+            '"action":"store","type":"fact","predicate":"work_schedule",'
+            '"scope":"working_hours","value":{"text":"daytime"},'
+            '"assertion_mode":"explicit","literalness":"literal",'
+            '"confidence":0.91,"importance":0.65,"sensitivity":"low",'
+            '"source_turn_ids":["t1"]}]}'
+        )
+        rule = HeuristicSessionExtractor(settings.writer)
+        session = Session(
+            "joke_1", "local", "u1", "2026-06-29", [
+                Turn(
+                    "t1",
+                    "user",
+                    "哈哈，我最喜欢凌晨三点改需求了，忙起来一分钟能改一万次。"
+                    "开玩笑的，我实际会在白天处理。",
+                )
+            ],
+        )
+
+        self.assertEqual([], rule.extract(session))
+        hybrid = HybridMemoryExtractor(
+            rule,
+            LLMSemanticMemoryExtractor(settings.writer, settings.llm, client),
+            settings.writer.max_candidates_per_session,
+        )
+        candidates = hybrid.extract(session)
+
+        self.assertEqual(1, client.calls)
+        self.assertEqual(1, len(candidates))
+        self.assertEqual("llm", candidates[0].extraction_source)
+        self.assertEqual("work_schedule", candidates[0].predicate)
+
+    def test_joke_semantic_failure_fails_closed_without_rule_candidate(self) -> None:
+        settings = load_settings(REPO_ROOT / "configs" / "default.json")
+        hybrid = HybridMemoryExtractor(
+            HeuristicSessionExtractor(settings.writer),
+            FailingExtractor(),
+            settings.writer.max_candidates_per_session,
+            semantic_required=False,
+        )
+        candidates = hybrid.extract(
+            Session(
+                "joke_failure", "local", "u1", "2026-06-29", [
+                    Turn("t1", "user", "我今天忙疯了，一分钟写了一万行代码。")
+                ],
+            )
+        )
+
+        self.assertEqual([], candidates)
+        self.assertIn("provider unavailable", hybrid.last_semantic_error or "")
+
 
 if __name__ == "__main__":
     unittest.main()

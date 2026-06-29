@@ -1,119 +1,143 @@
 # Cross-Agent
 
-跨 Session 长期记忆会话 Agent 的本地 MVP，实现技术报告中的“类型化状态 + 时序事件 + 混合检索 + 安全治理”主线。
+Cross-Agent 是一个跨 Session 长期记忆 Agent 的本地 MVP。它将用户记忆表示为类型化状态与时序事件，通过混合抽取、写入治理、混合检索和证据约束回答，让模型能够记住有用信息，同时避免把每句话都当成事实写入。
 
-当前版本采用“规则控制面 + 可选 LLM 语义候选层”的混合写入架构。两路候选进入统一 `CandidateResolver`，经过硬过滤、跨来源合并、含时间衰减的写入评分、槽位冲突消解后取全局 Top 10，再交给状态治理层。Governor 使用硬时间门阻止旧值覆盖新状态，将未决冲突保存为 tentative，并在后续独立证据确认后提升为 active。默认配置不需要 API key；在线配置可启用 LLM 语义抽取，但模型没有直接写库权限。
+核心原则：**模型只能提出候选，规则决定是否写入；抽取不等于记住，检索不等于使用，没有可靠证据就不编造。**
+
+## 核心能力
+
+- 类型化记忆：支持 `fact`、`preference`、`task`、`relation`、`event`、`summary` 和 `sensitive`。
+- 状态生命周期：支持 `active`、`tentative`、`superseded`、`archived` 和 `rejected`。
+- 混合写入：规则抽取与可选 LLM 语义抽取统一进入候选解析和治理链路。
+- 时间冲突处理：旧事实不会覆盖新状态；未决冲突先进入 tentative，后续证据可将其提升为 active。
+- 混合检索：组合 embedding、token cosine、词法、时间、重要性和置信度信号。
+- 安全控制：支持不保存、遗忘、敏感信息拒绝、披露过滤和拒答。
+- 可审计存储：SQLite 同时保存记忆状态 `memory_state` 与操作事件 `memory_events`。
+
+## 系统流程
+
+```text
+用户会话
+  -> 规则控制面 + 可选 LLM 语义候选层
+  -> CandidateResolver 过滤、合并、评分与 Top K
+  -> WritePolicy / PrivacyPolicy
+  -> Governor 状态迁移
+  -> SQLite 状态与事件存储
+
+用户问题
+  -> REQUIRED / BENEFICIAL / NONE 查询规划
+  -> 混合召回与重排
+  -> 可选 LLM 证据充分性验证
+  -> EvidenceBundle
+  -> 证据约束回答
+  -> ResponseGuard
+```
+
+## 写入策略
+
+规则层是不可绕过的控制面，负责安全预扫描、明确槽位抽取，以及“不保存”和“忘记”等用户指令。LLM 只负责开放语义理解，不能直接修改数据库。
+
+- 明确、低敏感的字面陈述可以由规则层抽取；在线模式下，语义层可补充结构化候选。
+- 玩笑、反讽、假设和夸张表达不生成规则候选，只交给语义层结合完整语境判断。
+- 语义层仅保留解释后仍成立、具有跨 Session 价值的持久字面主张。
+- 非字面会话未启用语义层或语义抽取失败时，系统 fail closed：不写入，也不回退为规则事实。
+- 密码、验证码、私钥及其他敏感或禁止内容停留在本地规则和隐私策略路径，不发送给语义模型。
+- 所有候选都必须经过 `CandidateResolver`、`WritePolicy`、`PrivacyPolicy` 和 Governor 后才能改变记忆状态。
+
+完整的数据模型、评分公式、冲突策略和状态迁移见 [长期记忆策略设计](docs/长期记忆策略设计.md)。
 
 ## 项目结构
 
 ```text
 configs/
-  default.json                  # 所有阈值、路径、权重、策略开关
-eval/
-  run_actmem_eval.py            # 前 5 条 ActMemEval 验收入口
+  default.json                  # 基础默认配置
+  yunai.json                    # 在线 LLM + Embedding 配置
+docs/
+  长期记忆策略设计.md            # 完整策略说明
 src/cross_agent/
-  config.py                     # 配置加载与环境变量覆盖
-  models.py                     # 领域模型：Candidate/Operation/Record/Evidence
-  pipeline.py                   # 应用装配层
-  writer/                       # 规则/LLM 抽取、统一重排与 Top 10 候选解析
-  governor/                     # 写入治理与幂等决策
-  store/                        # 存储抽象与 SQLite 实现
-  reader/                       # 查询规划、混合召回、重排、证据包
-  embedding/                    # Gemini Embedding 客户端与 SQLite 向量缓存
-  policies/                     # 写入与披露策略
-  answer/                       # 回答生成接口与本地实现
-  guard/                        # 证据约束与拒答
-  utils/                        # 文本、JSON 等纯工具
-scripts/
-  generate_architecture_report.py
-reports/
-  Cross-Agent架构设计报告.docx
+  writer/                       # 规则与 LLM 候选抽取、候选解析
+  governor/                     # 写入治理与状态迁移
+  store/                        # SQLite 状态和事件存储
+  reader/                       # 查询规划、混合召回与证据验证
+  embedding/                    # Embedding 客户端与 SQLite 向量缓存
+  policies/                     # 写入与隐私策略
+  answer/                       # 证据约束回答
+  guard/                        # 回答校验与拒答
+  pipeline.py                   # 应用装配与编排
+  cli.py                        # 命令行入口
+scripts/                        # 中文种子观测、报告生成与评测工具
+tests/                          # 单元测试
+eval0/ eval1/ eval2/           # 已生成的分阶段评测快照
 ```
 
-## 运行验收
+## 环境要求
+
+- Python 3.9+
+- 在线模式需要 OpenAI-compatible Chat Completions 和 Embeddings 服务
+
+建议使用虚拟环境：
 
 ```bash
-cd /Users/mac/workspace/Cross-Agent
-python3 eval/run_actmem_eval.py
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -e .
 ```
 
-输出文件：
+## 在线模式
 
-```text
-eval/output/actmem_eval_summary.json
-eval/output/actmem_eval_results.json
-eval/output/cross_agent_eval.sqlite3
-```
-
-当前前 5 条验收结果：
-
-```text
-recall@5 = 1.0000
-MRR      = 1.0000
-```
-
-## 配置优先
-
-所有路径、阈值、召回权重、同义扩展、敏感策略和评测数量都在 `configs/default.json` 中配置。业务模块只接收 typed settings，不直接读取本地路径或硬编码常量。
-
-支持的环境变量覆盖：
-
-```text
-CROSS_AGENT_DATASET
-CROSS_AGENT_SQLITE_PATH
-CROSS_AGENT_TENANT_ID
-CROSS_AGENT_USER_ID
-CROSS_AGENT_EMBEDDING_BASE_URL
-CROSS_AGENT_EMBEDDING_MODEL
-```
-
-## API key 接入点
-
-当前默认验收不需要 API key，使用 `ExtractiveAnswerGenerator` 离线跑通检索和证据链。若要接入在线模型，使用 `configs/yunai.json`：
+复制环境变量模板并填入 API key：
 
 ```bash
-cd /Users/mac/workspace/Cross-Agent
 cp .env.example .env
-# 编辑 .env，填入 YUNAI_API_KEY
-python3 eval/run_actmem_eval.py --config configs/yunai.json
+# 编辑 .env：YUNAI_API_KEY=...
 ```
 
-`configs/yunai.json` 已配置：
+`configs/yunai.json` 当前启用：
 
-```text
-base_url = https://yunai.chat/v1/chat/completions
-model    = deepseek-v4-pro:floor
-auth     = Authorization: Bearer ${YUNAI_API_KEY}
+- OpenAI-compatible LLM：语义候选抽取、记忆意图分类、证据充分性验证和 grounded answer。
+- Gemini Embedding：写入时建立向量缓存，查询时参与混合检索。
+- SQLite：记忆状态、审计事件和 embedding 缓存。
 
-embedding_url   = https://yunai.chat/v1/embeddings
-embedding_model = gemini-embedding-2-preview
-dimensions      = 3072
-```
-
-API key 不写入源码或 JSON，只从 `YUNAI_API_KEY` 读取；`.env` 已被 `.gitignore` 忽略。
-
-在线配置会同时启用 grounded answer、语义候选抽取、三态规则 + LLM 检索前置门控、Gemini Embedding 混合检索和 LLM 证据充分性验证。门控输出 `REQUIRED / BENEFICIAL / NONE`；召回候选经过统一重排后，只保留验证器确认能直接支持当前问题的记忆。文档 embedding 会缓存到 SQLite。在线配置要求意图模型、语义抽取、Embedding 和证据验证全部成功，重试失败后终止本次请求，不生成降级结果。核心能力均通过协议隔离：
-
-```text
-writer.extractor.MemoryExtractor        # LLM 候选抽取
-answer.generator.AnswerGenerator        # LLM grounded answer
-reader.memory_reader.MemoryReader       # 可替换向量检索实现
-embedding.client.EmbeddingProvider      # 可替换 Embedding 服务
-embedding.sqlite_index.VectorIndex      # 可替换 pgvector/HNSW 索引
-```
-
-模型供应商、模型名、temperature、timeout、API key 环境变量名应放入配置文件，再由装配层注入。
-
-只评估自建 22 轮中文种子并禁止任何模型降级：
+运行 22 轮中文种子观测：
 
 ```bash
 python3 scripts/run_chinese_seed_observation.py \
   --strict-online \
   --config configs/yunai.json \
-  --seed eval/eval1/chinese_user_only_conversation_seed.json \
-  --sqlite eval/eval1/chinese_seed_observation.sqlite3 \
-  --json eval/eval1/chinese_seed_api_conversation.json \
-  --markdown eval/eval1/chinese_seed_memory_observation.md
+  --seed eval2/chinese_user_only_conversation_seed.json \
+  --sqlite eval/output/chinese_seed_observation.sqlite3 \
+  --json eval/output/chinese_seed_api_conversation.json \
+  --markdown eval/output/chinese_seed_memory_observation.md
 ```
 
-严格模式要求意图 LLM、语义抽取、Gemini Embedding 和 LLM 证据验证成功；允许 API 重试，但禁止 `rule_fallback`、token-only 结果和带错误的正式结果。显式规则直判及敏感内容在 LLM 前拦截仍按正常安全策略执行。
+`--strict-online` 要求语义抽取、LLM 记忆意图、LLM 证据验证和 Embedding 全部成功；服务重试后仍失败会终止运行，不生成降级结果。运行中断后可在同一组路径上追加 `--resume`，从 checkpoint 和现有 SQLite 状态继续。
+
+如果通过 CLI 运行在线评测，CLI 不会自动加载 `.env`，需先导出 key：
+
+```bash
+export YUNAI_API_KEY=your-token
+export CROSS_AGENT_DATASET=/absolute/path/to/ActMemEval.json
+python3 -m cross_agent.cli eval --config configs/yunai.json --limit 5
+```
+
+API key 只从 `YUNAI_API_KEY` 读取，不应写入 JSON 配置或源码；`.env` 已被 `.gitignore` 忽略。
+
+## 配置覆盖
+
+所有阈值、权重、路径和能力开关都集中在 `configs/*.json`。支持以下环境变量覆盖：
+
+```text
+CROSS_AGENT_DATASET
+CROSS_AGENT_SQLITE_PATH
+CROSS_AGENT_OUTPUT_DIR
+CROSS_AGENT_TENANT_ID
+CROSS_AGENT_USER_ID
+CROSS_AGENT_LLM_MODEL
+CROSS_AGENT_LLM_BASE_URL
+CROSS_AGENT_EMBEDDING_BASE_URL
+CROSS_AGENT_EMBEDDING_MODEL
+```
+
+## License
+
+见 [LICENSE](LICENSE)。
